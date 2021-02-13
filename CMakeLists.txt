@@ -52,6 +52,12 @@ include_directories(${PROJECT_SOURCE_DIR}/include/physics)
 set(libs)
 
 # OpenGL
+
+# use GLVND instead of legacy OpenGL
+if(POLICY CMP0072)
+  cmake_policy(SET CMP0072 NEW)
+endif()
+
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})
 list(APPEND libs ${OPENGL_LIBRARIES})
@@ -80,30 +86,30 @@ endif()
 # VarTypes
 find_package(VarTypes)
 
-if(NOT VARTYPES_FOUND)
+if(NOT VarTypes_FOUND)
   include(ExternalProject)
-  set(VARTYPES_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}/vartypes_install")
+  set(VarTypes_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}/vartypes_install")
   
-  set(VARTYPES_CMAKE_ARGS "-DVARTYPES_BUILD_STATIC=ON;-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>")
+  set(VarTypes_CMAKE_ARGS "-DVarTypes_BUILD_STATIC=ON;-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>")
   if(NOT "${CMAKE_TOOLCHAIN_FILE}" STREQUAL "")
-    set(VARTYPES_CMAKE_ARGS "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE};${VARTYPES_CMAKE_ARGS}")
+    set(VarTypes_CMAKE_ARGS "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE};${VarTypes_CMAKE_ARGS}")
   endif()
 
   ExternalProject_Add(vartypes_external
     GIT_REPOSITORY    https://github.com/jpfeltracco/vartypes
     GIT_TAG           origin/jpfeltracco/build_static
-    INSTALL_DIR       "${VARTYPES_INSTALL_DIR}"
-    CMAKE_ARGS        "${VARTYPES_CMAKE_ARGS}"
+    INSTALL_DIR       "${VarTypes_INSTALL_DIR}"
+    CMAKE_ARGS        "${VarTypes_CMAKE_ARGS}"
   )
   add_dependencies(${app} vartypes_external)
 
-  set(VARTYPES_INCLUDE_DIRS "${VARTYPES_INSTALL_DIR}/include")
-  set(VARTYPE_LIB_NAME ${CMAKE_STATIC_LIBRARY_PREFIX}vartypes${CMAKE_STATIC_LIBRARY_SUFFIX})
-  set(VARTYPES_LIBRARIES "${VARTYPES_INSTALL_DIR}/lib/${VARTYPE_LIB_NAME}")
+  set(VarTypes_INCLUDE_DIRS "${VarTypes_INSTALL_DIR}/include")
+  set(VarTypes_LIB_NAME ${CMAKE_STATIC_LIBRARY_PREFIX}vartypes${CMAKE_STATIC_LIBRARY_SUFFIX})
+  set(VarTypes_LIBRARIES "${VarTypes_INSTALL_DIR}/lib/${VARTYPE_LIB_NAME}")
 endif()
 
-target_include_directories(${app} PRIVATE ${VARTYPES_INCLUDE_DIRS})
-list(APPEND libs ${VARTYPES_LIBRARIES})
+target_include_directories(${app} PRIVATE ${VarTypes_INCLUDE_DIRS})
+list(APPEND libs ${VarTypes_LIBRARIES})
 
 # Protobuf
 find_package(Protobuf REQUIRED)
@@ -126,6 +132,12 @@ protobuf_generate_cpp(PROTO_CPP PROTO_H
     src/proto/ssl_vision_geometry.proto
     src/proto/ssl_vision_wrapper.proto
 )
+
+# exclude generated header files from Qt Automoc
+set(GRSIM_AUTOGEN_FILES ${PROTO_H};${PROTO_CPP})
+foreach(protoc_header IN LISTS GRSIM_AUTOGEN_FILES)
+  set_property(SOURCE ${protoc_header} PROPERTY SKIP_AUTOMOC ON)
+endforeach(protoc_header)
 
 qt5_add_resources(RESOURCES
     resources/textures.qrc

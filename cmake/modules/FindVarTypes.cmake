@@ -1,5 +1,5 @@
 find_path(
-   VARTYPES_INCLUDE_DIRS
+   VarTypes_INCLUDE_DIRS
    NAMES
    vartypes/VarTypes.h
    HINTS
@@ -10,7 +10,7 @@ find_path(
 )
 
 find_library(
-   VARTYPES_LIBRARY
+   VarTypes_LIBRARY
    NAMES
    vartypes
    HINTS
@@ -20,18 +20,18 @@ find_library(
    $ENV{ProgramFiles}/vartypes/lib
 )
 
-set(VARTYPES_LIBRARIES ${VARTYPES_LIBRARY})
+set(VarTypes_LIBRARIES ${VarTypes_LIBRARY})
 
 find_package_handle_standard_args(
-   VARTYPES
+   VarTypes
    DEFAULT_MSG
-   VARTYPES_INCLUDE_DIRS
-   VARTYPES_LIBRARIES
+   VarTypes_INCLUDE_DIRS
+   VarTypes_LIBRARIES
 )
 
 mark_as_advanced(
-    VARTYPES_INCLUDE_DIRS
-    VARTYPES_LIBRARIES
-    VARTYPES_LIBRARY
+    VarTypes_INCLUDE_DIRS
+    VarTypes_LIBRARIES
+    VarTypes_LIBRARY
 )
 

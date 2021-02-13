@@ -20,6 +20,12 @@ protobuf_generate_cpp(PROTO_CPP PROTO_H
     ../../src/proto/grSim_Packet.proto
 )
 
+# exclude generated header files from Qt Automoc
+set(CLIENT_AUTOGEN_FILES ${PROTO_H};${PROTO_CPP})
+foreach(protoc_header IN LISTS CLIENT_AUTOGEN_FILES)
+  set_property(SOURCE ${protoc_header} PROPERTY SKIP_AUTOMOC ON)
+endforeach(protoc_header)
+
 set(app client)
 
 add_executable(${app} MACOSX_BUNDLE
