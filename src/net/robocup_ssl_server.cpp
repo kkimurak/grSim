@@ -63,9 +63,8 @@ void RoboCupSSLServer::change_interface(const string & net_interface)
 
 bool RoboCupSSLServer::send(const SSL_WrapperPacket & packet)
 {
-    QByteArray datagram;
+    QByteArray datagram(packet.ByteSizeLong(), 0);
 
-    datagram.resize(packet.ByteSize());
     bool success = packet.SerializeToArray(datagram.data(), datagram.size());
     if(!success) {
         //TODO: print useful info
