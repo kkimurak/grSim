@@ -43,7 +43,7 @@ jobs:
         run: mkdir '${{ github.workspace }}/build/'
 
       - name: Install dependencies # saves / restores cache to avoid rebuilding dependencies
-        uses: lukka/run-vcpkg@v10
+        uses: lukka/run-vcpkg@v6
         with:
           setupOnly: false
           vcpkgGitCommitId: 94ce0dab56f4d8ba6bd631ba59ed682b02d45c46
