@@ -53,7 +53,7 @@ jobs:
         with:
           # this preset is needed to actually install the vcpkg dependencies
           configurePreset: "ninja-multi-vcpkg"
-          configurePresetAdditionalArgs: "[-DVCPKG_TARGET_TRIPLET=x64-windows]"
+          configurePresetAdditionalArgs: "['-DVCPKG_TARGET_TRIPLET=x64-windows']"
           buildPreset: "ninja-multi-vcpkg"
           buildPresetAdditionalArgs: "['--config Release']"
     env:
