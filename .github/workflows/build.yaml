@@ -45,7 +45,7 @@ jobs:
       - name: Install dependencies # saves / restores cache to avoid rebuilding dependencies
         uses: lukka/run-vcpkg@v11
         with:
-          vcpkgGitCommitId: 8eb57355a4ffb410a2e94c07b4dca2dffbee8e50
+          vcpkgGitCommitId: fba75d09065fcc76a25dcf386b1d00d33f5175af # (git tag --sort authordate | tail -n 1) = 2024.02.14
           vcpkgDirectory: c:/vcpkg  # folder must reside in c:\ otherwise qt wont install due to long path errors
 
       - name: Run CMake and run vcpkg to build packages
