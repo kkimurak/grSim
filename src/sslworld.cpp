@@ -752,10 +752,15 @@ void SSLWorld::processSimControl(const SimulatorCommand &simulatorCommand, Simul
     }
 
     if (simulatorCommand.has_config()) {
-        if (simulatorCommand.config().has_geometry()
-            || simulatorCommand.config().has_realism_config()
+        if (simulatorCommand.config().has_realism_config()
             || simulatorCommand.config().has_vision_port()) {
             simulatorResponse.add_errors()->set_code("GRSIM_UNSUPPORTED_CONFIG");
+        }
+        if(simulatorCommand.mutable_config().has_geometry()) {
+            SSL_GeometryData* geometry = simulatorCommand.config().geometry();
+            if(geometry->has_field()) {
+                const auto& field = geometry.field();
+            }
         }
         for (const auto &robotSpec : simulatorCommand.config().robot_specs()) {
             processRobotSpec(robotSpec);
