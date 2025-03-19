@@ -80,6 +80,10 @@ private:
                             Robot *robot) ;
     void processTeleportBall(SimulatorResponse &simulatorResponse, const TeleportBall &teleBall) const;
     static void processTeleportRobot(const TeleportRobot &teleBot, Robot *robot);
+
+    void drawGeoCircle(CGeoCirlce* circle);
+    void drawGeoQuad(CGeoQuadrilateral* quad);
+    void drawBlindZone(CGeoShape* shape);
 public:    
     dReal customDT;
     bool isGLEnabled;

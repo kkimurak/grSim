@@ -415,6 +415,36 @@ void SSLWorld::glinit() {
     p->glinit();
 }
 
+void SSLWorld::drawGeoCircle(CGeoCirlce* circle) {
+    g->setColor(0.7,0.7,0.7,0.5);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    g->drawCircle(circle->Center().x(),circle->Center().y(),0.001,circle->Radius());
+    glDisable(GL_BLEND);
+};
+
+void SSLWorld::drawGeoQuad(CGeoQuadrilateral* quad) {
+    g->setColor(0.7,0.7,0.7,0.5);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    glShadeModel (GL_FLAT);
+    glBegin(GL_QUADS);
+    for(int i=0;i<4;++i)
+        glVertex3d(quad->_point[i].x(), quad->_point[i].y(),0.001);
+    glEnd();
+    glDisable(GL_BLEND);
+};
+
+void SSLWorld::drawBlindZone(CGeoShape* shape) {
+    const auto type_name = typeid(*shape).name();
+    if(type_name == typeid(CGeoCirlce).name()) {
+        drawGeoCircle(dynamic_cast<CGeoCirlce*>(shape));
+    }
+    else if(type_name == typeid(CGeoQuadrilateral).name()) {
+        drawGeoQuad(dynamic_cast<CGeoQuadrilateral*>(shape));
+    }
+}
+
 void SSLWorld::step(dReal dt) {
     if (customDT > 0) dt = customDT;
     const auto ratio = m_parent->devicePixelRatio();
@@ -512,6 +542,7 @@ void SSLWorld::step(dReal dt) {
     dMatrix3 R;
 
     if (g->isGraphicsEnabled())
+    {
         if (show3DCursor)
         {
             dRFromAxisAndAngle(R,0,0,1,0);
@@ -521,6 +552,19 @@ void SSLWorld::step(dReal dt) {
             g->drawCircle(cursor_x,cursor_y,0.001,cursor_radius);
             glDisable(GL_BLEND);
         }
+
+        // draw blind zones if enabled
+        if (cfg->BlindZone())
+        {
+            for(auto & blindZoneForCamera : blindZones)
+            {
+                for(auto & blindZone : blindZoneForCamera)
+                {
+                    drawBlindZone(blindZone);
+                }
+            }
+        }
+    }
 
     g->finalizeScene();
 
